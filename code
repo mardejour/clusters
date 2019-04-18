@@ -1,0 +1,121 @@
+require(data.table)
+
+museums1 <- fread("/Users/aa/Desktop/data_for_public_good/MuseumFile2018_File1_Nulls.csv")
+
+museums2 <- fread("/Users/aa/Desktop/data_for_public_good/MuseumFile2018_File2_Nulls.csv")
+
+museums3 <- fread("/Users/aa/Desktop/data_for_public_good/MuseumFile2018_File3_Nulls.csv")
+
+names(museums1)
+
+names(museums2)
+
+names(museums3)
+
+head(museums1)
+
+head(museums2)
+
+head(museums3)
+
+museums1_sub <- museums1[,c("DISCIPL","MID","LONGITUDE","LATITUDE","COMMONNAME","ADSTATE")]
+
+museums2_sub <- museums2[,c("DISCIPLINE","MID","LONGITUDE","LATITUDE","COMMONNAME","ADSTATE")]
+
+museums3_sub <- museums3[,c("DISCIPLINE","MID","LONGITUDE","LATITUDE","COMMONNAME","ADSTATE")]
+
+museums1_sub$MID <- as.character(museums1_sub$MID)
+
+museums2_sub$MID <- as.character(museums2_sub$MID)
+
+museums3_sub$MID <- as.character(museums3_sub$MID)
+
+summary(museums1_sub)
+
+summary(museums2_sub)
+
+summary(museums3_sub)
+
+names(museums1_sub)[1] <- "DISCIPLINE"
+
+museums_full <- rbind(museums1_sub, museums2_sub, museums3_sub)
+
+museums_full <- subset(museums_full, ADSTATE == "NY")
+
+museums_full <- subset(museums_full, DISCIPLINE == "ART" |
+
+                         DISCIPLINE == "HIST" |
+
+                         DISCIPLINE == "NAT" |
+
+                         DISCIPLINE == "SCI" |
+
+                         DISCIPLINE == "CMU" |
+
+                         DISCIPLINE == "HST" |     
+
+                      
+
+museums_full <- subset(museums_full, LATITUDE!=0)
+
+museums_full <- subset(museums_full, LONGITUDE!=0)
+
+museums_full <- subset(museums_full, !duplicated(MID))
+
+plot(museums_full$LONGITUDE, museums_full$LATITUDE)
+
+museums_full <- subset(museums_full, LONGITUDE > -90)
+
+plot(museums_full$LONGITUDE, museums_full$LATITUDE)
+
+head(museums_full)
+
+museums_full$lat <- museums_full$LATITUDE
+
+museums_full$long <- museums_full$LONGITUDE
+
+install.packages ("sp")
+
+require(sp)
+
+coordinates(museums_full)=~LONGITUDE+LATITUDE
+
+proj4string(museums_full)=CRS("+init=epsg:4269")
+
+plot(museums_full)
+
+install.packages("leaflet")
+
+require(leaflet)
+
+install.packages("htmlwidgets")
+
+require(htmlwidgets)
+
+museums_map <- leaflet(data=museums_full) %>%
+
+  addTiles() %>%
+
+  addMarkers(~long, ~lat, 
+
+             popup = paste("Museum Name:", museums_full$COMMONNAME, "<br>",
+
+                           "National Museum ID:", museums_full$MID, "<br>",
+
+                      
+
+                           "Museum Location (Latitude):", museums_full$lat, "<br>",
+
+                        
+
+                           "Museum Location (Longitude):", museums_full$long, "<br>", 
+
+                           "Museum City:", museums_full$ADCITY, "<br>",
+
+                           "Museum Street:", museums_full$ADSTREET, "<br>",
+
+                           "Museum Website:", museums_full$WEBURL), clusterOptions = markerClusterOptions() )
+
+museums_map
+
+saveWidget(museums_map, file="NY_Museums.html")
