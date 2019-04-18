@@ -1,10 +1,10 @@
 require(data.table)
 
-museums1 <- fread("/Users/aa/Desktop/data_for_public_good/MuseumFile2018_File1_Nulls.csv")
+museums1 <- fread("/Users/maryamag/Desktop/data_for_public_good/MuseumFile2018_File1_Nulls.csv")
 
-museums2 <- fread("/Users/aa/Desktop/data_for_public_good/MuseumFile2018_File2_Nulls.csv")
+museums2 <- fread("/Users/maryamag/Desktop/data_for_public_good/MuseumFile2018_File2_Nulls.csv")
 
-museums3 <- fread("/Users/aa/Desktop/data_for_public_good/MuseumFile2018_File3_Nulls.csv")
+museums3 <- fread("/Users/maryamag/Desktop/data_for_public_good/MuseumFile2018_File3_Nulls.csv")
 
 names(museums1)
 
